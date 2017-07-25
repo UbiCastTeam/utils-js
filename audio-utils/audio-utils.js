@@ -1,4 +1,4 @@
-/* global AudioContext, LocalMediaStream */
+/* global AudioContext, MediaStream */
 function AudioUtils (options) {
     this.audio_context = new AudioContext();
     this.audio = options.audio;
@@ -12,7 +12,7 @@ function AudioUtils (options) {
 }
 AudioUtils.prototype.init = function () {
     if (!this.audio_source) {
-        if (this.audio instanceof LocalMediaStream) {
+        if (this.audio instanceof MediaStream) {
             this.audio_source = this.audio_context.createMediaStreamSource(this.audio);
         } else {
             this.audio_source = this.audio_context.createMediaElementSource(this.audio);
