@@ -2,7 +2,6 @@
 function AudioUtils (options) {
     this.audio_context = new AudioContext();
     this.audio = options.audio;
-    this.channel_number = options.channel_number || 6;
     this.silent = options.silent || false;
 
     this.audio_source = null;
@@ -18,17 +17,16 @@ AudioUtils.prototype.init = function () {
             this.audio_source = this.audio_context.createMediaElementSource(this.audio);
         }
     }
-    this.splitter = this.audio_context.createChannelSplitter(this.channel_number);
-
+    this.splitter = this.audio_context.createChannelSplitter();
     this.audio_source.connect(this.splitter);
     this.merger = this.audio_context.createChannelMerger(1);
     this.gainNodes = [];
-    for (var i = 0; i < this.channel_number; i++) {
+    for (var i = 0; i < this.splitter.numberOfOutputs; i++) {
         var gainNode = this.audio_context.createGain();
         gainNode.gain.value = 1;
         this.gainNodes.push(gainNode);
     }
-    for (var i = 0; i < this.channel_number; i++) {
+    for (var i = 0; i < this.splitter.numberOfOutputs; i++) {
         this.splitter.connect(this.gainNodes[i], i);
         this.gainNodes[i].connect(this.merger, 0, 0);
     }
@@ -53,7 +51,6 @@ AudioUtils.prototype.audioMeter = function (callback, accuracy) {
 
     var running = false;
     javascriptNode.onaudioprocess = function (event) {
-
         var inpt_L = event.inputBuffer.getChannelData(0);
         var instant_L = 0.0;
 

@@ -7,7 +7,7 @@
     <script type="text/javascript" src="../utils.js"></script>
     <script type="text/javascript">
         var aUtils = null;
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {change_src();
             aUtils = new AudioUtils({
                 audio: document.getElementById("audio")
             });
@@ -25,6 +25,12 @@
                 button.textContent = "Mute";
             }
         }
+        function change_src () {
+            var select = document.getElementById("audio_src");
+            var audio = document.getElementById("audio");
+            audio.src = select.options[select.selectedIndex].value;
+            audio.play();
+        }
     </script>
     <style type="text/css">
         .hidden {
@@ -34,7 +40,15 @@
 </head>
 <body>
     <h1>Test for audio utils</h1>
-    <audio id="audio" controls="controls" loop="loop" src="media/test_6_channels.m4a"></audio>
+    <select id="audio_src" onchange="change_src();">
+        <option value="media/test_1_channels.m4a">1</option>
+        <option value="media/test_2_channels.m4a">2</option>
+        <option value="media/test_3_channels.m4a">3</option>
+        <option selected="selected" value="media/test_4_channels.m4a">4</option>
+        <option value="media/test_5_channels.m4a">5</option>
+        <option  value="media/test_6_channels.m4a">6</option>
+    </select>
+    <audio id="audio" controls="controls" loop="loop"></audio>
     <h2>Audio meter</h2>
     <progress id="progress" value="0" max="100" min="0"></progress>
     <h2>Audio multi canal control</h2>
