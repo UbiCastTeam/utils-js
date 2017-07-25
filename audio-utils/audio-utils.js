@@ -21,7 +21,7 @@ AudioUtils.prototype.init = function () {
     this.splitter = this.audio_context.createChannelSplitter(this.channel_number);
 
     this.audio_source.connect(this.splitter);
-    this.merger = this.audio_context.createChannelMerger(this.channel_number);
+    this.merger = this.audio_context.createChannelMerger(1);
     this.gainNodes = [];
     for (var i = 0; i < this.channel_number; i++) {
         var gainNode = this.audio_context.createGain();
@@ -30,7 +30,7 @@ AudioUtils.prototype.init = function () {
     }
     for (var i = 0; i < this.channel_number; i++) {
         this.splitter.connect(this.gainNodes[i], i);
-        this.gainNodes[i].connect(this.merger, 0, i);
+        this.gainNodes[i].connect(this.merger, 0, 0);
     }
     if (!this.silent) {
         this.merger.connect(this.audio_context.destination);
