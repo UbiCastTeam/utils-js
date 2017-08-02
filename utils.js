@@ -129,6 +129,14 @@ utils.isinstance = function (obj, type) {
     return false;
 };
 
+// decode html
+utils.decode_html = function (data) {
+    var div = document.createElement("div");
+    div.innerHTML = data;
+    // handle case of empty input
+    return div.childNodes.length === 0 ? "" : div.childNodes[0].nodeValue;
+};
+
 // escape html
 utils.escape_html = function (text) {
     if (!text)
