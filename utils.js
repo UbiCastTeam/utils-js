@@ -278,7 +278,23 @@ utils._get_browser_info = function () {
 utils._get_browser_info();
 
 utils.webgl_available = function (canvas) {
-    return !! window.WebGLRenderingContext && (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+    var webglAvailable = !! window.WebGLRenderingContext;
+    if (webglAvailable) {
+        try {
+            var webglContext = webglAvailable && (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+            if (!webglContext) {
+                console.log("Impossible to initialize WebGL context. Your browser does not support Webgl context");
+                return null;
+            }
+            return webglContext;
+        } 
+        catch(e) {
+            console.log("WebGL context is supported but may be disable, please check your browser configuration");
+            return null;
+        }
+    }
+    console.log("Your browser does not support Webgl context");
+    return null;
 };
 
 // Translations utils
