@@ -277,6 +277,10 @@ utils._get_browser_info = function () {
 };
 utils._get_browser_info();
 
+utils.webgl_available = function (canvas) {
+    return !! window.WebGLRenderingContext && (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+};
+
 // Translations utils
 utils._translations = { en: {} };
 utils._current_lang = "en";
