@@ -306,6 +306,14 @@ utils.webgl_available = function (canvas) {
     return null;
 };
 
+utils.isInIframe = function () {
+    var isInIframe = window.frameElement && window.frameElement.nodeName == "IFRAME";
+    if (isInIframe)
+        return true;
+    return false;
+};
+
+
 // Translations utils
 utils._translations = { en: {} };
 utils._current_lang = "en";
