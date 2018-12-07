@@ -290,7 +290,7 @@ utils.webgl_available = function (canvas) {
     var webglAvailable = !! window.WebGLRenderingContext;
     if (webglAvailable) {
         try {
-            var webglContext = webglAvailable && (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+            var webglContext = webglAvailable && (canvas.getContext("webgl2", { premultipliedAlpha: false}) || canvas.getContext("webgl", { premultipliedAlpha: false}) || canvas.getContext("experimental-webgl", { premultipliedAlpha: false}));
             if (!webglContext) {
                 console.log("Impossible to initialize WebGL context. Your browser does not support Webgl context");
                 return null;
