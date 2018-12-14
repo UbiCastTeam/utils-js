@@ -286,11 +286,11 @@ utils._get_browser_info = function () {
 };
 utils._get_browser_info();
 
-utils.webgl_available = function (canvas) {
+utils.webgl_available = function (canvas, options) {
     var webglAvailable = !! window.WebGLRenderingContext;
     if (webglAvailable) {
         try {
-            var webglContext = webglAvailable && (canvas.getContext("webgl2", { premultipliedAlpha: false}) || canvas.getContext("webgl", { premultipliedAlpha: false}) || canvas.getContext("experimental-webgl", { premultipliedAlpha: false}));
+            var webglContext = webglAvailable && (canvas.getContext("webgl2", options) || canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options));
             if (!webglContext) {
                 console.log("Impossible to initialize WebGL context. Your browser does not support Webgl context");
                 return null;
