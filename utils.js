@@ -493,3 +493,24 @@ utils.compute_md5 = function (file, callback, progress_callback) {
     }
     loadNext();
 };
+
+utils.focus_first_descendant = function (element) {
+    for (var i = 0; i < element.childNodes.length; i++) {
+        var child = element.childNodes[i];
+        if (utils.attempt_focus(child)) {
+            return true;
+        } else if (utils.focus_first_descendant(child)) {
+            return true;
+        }
+    }
+    return false;
+};
+
+utils.attempt_focus = function (element) {
+    try {
+        element.focus();
+    }
+    catch (e) {
+    }
+    return (document.activeElement === element);
+};
