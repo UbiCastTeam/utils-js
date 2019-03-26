@@ -506,11 +506,27 @@ utils.focus_first_descendant = function (element) {
     return false;
 };
 
+utils.focus_last_descendant = function (element) {
+    for (var i = element.childNodes.length - 1; i >= 0; i--) {
+      var child = element.childNodes[i];
+      if (utils.attempt_focus(child) ||
+          utils.focus_last_descendant(child)) {
+        return true;
+      }
+    }
+    return false;
+};
+utils.ignore_until_focus_changes = false;
 utils.attempt_focus = function (element) {
+    if (utils.ignore_until_focus_changes) {
+      return;
+    }
+    utils.ignore_until_focus_changes = true;
     try {
         element.focus();
     }
     catch (e) {
     }
+    utils.ignore_until_focus_changes = false;
     return (document.activeElement === element);
 };
