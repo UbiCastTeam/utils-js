@@ -148,6 +148,14 @@ utils.escape_html = function (text) {
     result = result.replace(/(\")/g, "&quot;");
     return result;
 };
+// escape html
+utils.strip_html = function (html) {
+    if (!html)
+        return html;
+    var div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent;
+};
 
 // escape attribute
 utils.escape_attr = function (attr) {
