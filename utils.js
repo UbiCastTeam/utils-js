@@ -280,7 +280,7 @@ utils._get_browser_info = function () {
     }
     else if (ua.indexOf("safari") != -1) {
         name = "safari";
-        version = utils._extract_browser_version(ua, /Version\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /version\/(\d+\.\d+)/);
     }
     utils.browser_name = name;
     utils["browser_is_"+name] = true;
