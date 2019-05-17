@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+
+	<title>Utils.js test page</title>
+
+	<script type="text/javascript" src="utils.js"></script>
+
+	<script type="text/javascript">
+		function testTranslation() {
+			var expected = "test trad";
+			utils.add_translations({"test label": expected});
+			alert(
+				"current lang: " + utils._current_lang + "\n" +
+				utils.translate("test label") + "\n" +
+				"Test: " + (utils.translate("test label") == expected ? "OK" : "FAIL")
+			);
+		}
+
+		function testUserAgent() {
+			// trigger internal user agent change
+			var ua = document.getElementById("userAgent").value;
+			if (ua) {
+				utils.user_agent = ua.toLowerCase();
+				utils._get_browser_info();
+			} else {
+				utils._get_user_agent();
+			}
+			alert(
+				"utils.user_agent: " + utils.user_agent + "\n" +
+				"utils.browser_name: " + utils.browser_name + "\n" +
+				"utils.browser_version: " + utils.browser_version + "\n" +
+				"utils.browser_version (type): " + (typeof utils.browser_version) + "\n" +
+				"utils.is_phone: " + utils.is_phone + "\n" +
+				"utils.is_tablet: " + utils.is_tablet + "\n" +
+				"utils.is_mobile: " + utils.is_mobile + "\n" +
+				"utils.is_tactile: " + utils.is_tactile
+			);
+			return false;
+		}
+
+		function testWebGL() {
+			alert("utils.webgl_available: " + utils.webgl_available());
+		}
+	</script>
+</head>
+
+<body>
+	<p>
+		<button type="button" onclick="testTranslation();">Test translations</button>
+	</p>
+	<p>
+		<button type="button" onclick="testUserAgent();">Test user agent</button>
+		<input type="text" name="userAgent" id="userAgent" style="width: 90%" placeholder="User agent to test (local user agent if empty)"/>
+	</p>
+	<p>
+		<button type="button" onclick="testWebGL();">Test webgl</button>
+	</p>
+</body>

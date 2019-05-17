@@ -218,8 +218,18 @@ utils._get_os_name = function () {
 utils._get_os_name();
 utils._extract_browser_version = function (ua, re) {
     var matches = ua.match(re);
-    if (matches && !isNaN(parseFloat(matches[1])))
-        return parseFloat(matches[1]);
+    if (matches && !isNaN(parseInt(matches[1], 10))) {
+        var vNumb = "";
+        if (!isNaN(parseInt(matches[2], 10))) {
+            vNumb = matches[2];
+            while (vNumb.length < 10) {
+                // zero padding to be able to compare versions
+                vNumb = "0" + vNumb;
+            }
+        }
+        vNumb = matches[1] + "." + vNumb;
+        return parseFloat(vNumb);
+    }
     return 0.0;
 };
 utils._get_browser_info = function () {
@@ -229,29 +239,29 @@ utils._get_browser_info = function () {
     var ua = utils.user_agent;
     if (ua.indexOf("firefox") != -1) {
         name = "firefox";
-        version = utils._extract_browser_version(ua, /firefox\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /firefox\/(\d+)\.(\d+)/);
         if (!version)
-            version = utils._extract_browser_version(ua, /rv:(\d+\.\d+)/);
+            version = utils._extract_browser_version(ua, /rv:(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("edge") != -1) {
         name = "edge";
-        version = utils._extract_browser_version(ua, /edge\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /edge\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("chromium") != -1) {
         name = "chromium";
-        version = utils._extract_browser_version(ua, /chromium\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /chromium\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("chrome") != -1) {
         name = "chrome";
-        version = utils._extract_browser_version(ua, /chrome\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /chrome\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("iemobile") != -1) {
         name = "iemobile";
-        version = utils._extract_browser_version(ua, /iemobile\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /iemobile\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("msie") != -1) {
         name = "ie";
-        version = utils._extract_browser_version(ua, /msie (\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /msie (\d+)\.(\d+)/);
         if (version < 7)
             utils.browser_is_ie6 = true;
         else if (version < 8)
@@ -263,24 +273,24 @@ utils._get_browser_info = function () {
     }
     else if (ua.indexOf("trident") != -1) {
         name = "ie";
-        version = utils._extract_browser_version(ua, /rv.{1}(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /rv.{1}(\d+)\.(\d+)/);
         utils.browser_is_ie9 = true;
     }
     else if (ua.indexOf("opera") != -1) {
         name = "opera";
-        version = utils._extract_browser_version(ua, /opera\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /opera\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("konqueror") != -1) {
         name = "konqueror";
-        version = utils._extract_browser_version(ua, /konqueror\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /konqueror\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("mobile safari") != -1) {
         name = "mobile_safari";
-        version = utils._extract_browser_version(ua, /mobile safari\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /mobile safari\/(\d+)\.(\d+)/);
     }
     else if (ua.indexOf("safari") != -1) {
         name = "safari";
-        version = utils._extract_browser_version(ua, /version\/(\d+\.\d+)/);
+        version = utils._extract_browser_version(ua, /version\/(\d+)\.(\d+)/);
     }
     utils.browser_name = name;
     utils["browser_is_"+name] = true;
