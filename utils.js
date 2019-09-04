@@ -18,46 +18,6 @@ if (!window.console.info)
 if (!window.console.warn)
     window.console.warn = window.console.log;
 
-
-var utils = {};
-
-// cookies
-utils.get_cookie = function (c_name, c_default) {
-    if (document.cookie.length > 0) {
-        var c_start = document.cookie.indexOf(c_name + "=");
-        if (c_start != -1) {
-            c_start = c_start + c_name.length+1;
-            var c_end = document.cookie.indexOf(";", c_start);
-            if (c_end == -1)
-                c_end = document.cookie.length;
-            return window.unescape(document.cookie.substring(c_start, c_end));
-        }
-    }
-    return c_default !== undefined ? c_default : "";
-};
-utils.set_cookie = function (c_name, value, expiredays) {
-    var exdate = new Date();
-    exdate.setDate(exdate.getDate() + (expiredays ? expiredays : 360));
-    document.cookie = c_name+"="+window.escape(value)+"; expires="+exdate.toUTCString()+"; path=/";
-};
-
-// strip function
-utils.strip = function (str, character) {
-    if (!str)
-        return str;
-    var c = character !== undefined ? character : " ";
-    var start = 0;
-    while (start < str.length && str[start] == c) {
-        start++;
-    }
-    var end = str.length - 1;
-    while (end >= 0 && str[end] == c) {
-        end--;
-    }
-    var result = str.substring(start, end+1);
-    return result;
-};
-
 // add indexOf method to Array (for IE8)
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function(searchElement, fromIndex) {
@@ -118,6 +78,61 @@ if (!Object.keys) {
         };
     }());
 }
+
+// add repeat method to String (for all IE)
+if (!String.prototype.repeat) {
+    String.prototype.repeat = function(count) {
+        if (isNaN(count) || count < 0)
+            throw new TypeError("Invalid value for \"count\".");
+        var i = 0;
+        var n = "";
+        while (i < count) {
+            n += this;
+            i++;
+        }
+        return n;
+    };
+}
+
+
+var utils = {};
+
+// cookies
+utils.get_cookie = function (c_name, c_default) {
+    if (document.cookie.length > 0) {
+        var c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1) {
+            c_start = c_start + c_name.length+1;
+            var c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1)
+                c_end = document.cookie.length;
+            return window.unescape(document.cookie.substring(c_start, c_end));
+        }
+    }
+    return c_default !== undefined ? c_default : "";
+};
+utils.set_cookie = function (c_name, value, expiredays) {
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + (expiredays ? expiredays : 360));
+    document.cookie = c_name+"="+window.escape(value)+"; expires="+exdate.toUTCString()+"; path=/";
+};
+
+// strip function
+utils.strip = function (str, character) {
+    if (!str)
+        return str;
+    var c = character !== undefined ? character : " ";
+    var start = 0;
+    while (start < str.length && str[start] == c) {
+        start++;
+    }
+    var end = str.length - 1;
+    while (end >= 0 && str[end] == c) {
+        end--;
+    }
+    var result = str.substring(start, end+1);
+    return result;
+};
 
 // isinstance
 utils.isinstance = function (obj, type) {
