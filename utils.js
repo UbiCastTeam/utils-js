@@ -118,16 +118,16 @@ utils.set_cookie = function (c_name, value, expiredays) {
 };
 
 // strip function
-utils.strip = function (str, character) {
+utils.strip = function (str, characters) {
     if (!str)
         return str;
-    var c = character !== undefined ? character : " ";
+    var crs = characters !== undefined ? characters : " \n\r\t ";  // the last space is a non secable space
     var start = 0;
-    while (start < str.length && str[start] == c) {
+    while (start < str.length && crs.indexOf(str[start]) != -1) {
         start++;
     }
     var end = str.length - 1;
-    while (end >= 0 && str[end] == c) {
+    while (end >= 0 && crs.indexOf(str[end]) != -1) {
         end--;
     }
     var result = str.substring(start, end+1);
