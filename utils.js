@@ -437,17 +437,17 @@ utils.get_size_display = function (value) {
     if (!value || isNaN(value))
         return "0 " + utils.translate("B");
     var unit = "";
-    if (value > 1024) {
-        value /= 1024;
+    if (value > 1000) {
+        value /= 1000;
         unit = "K";
-        if (value > 1024) {
-            value /= 1024;
+        if (value > 1000) {
+            value /= 1000;
             unit = "M";
-            if (value > 1024) {
-                value /= 1024;
+            if (value > 1000) {
+                value /= 1000;
                 unit = "G";
-                if (value > 1024) {
-                    value /= 1024;
+                if (value > 1000) {
+                    value /= 1000;
                     unit = "T";
                 }
             }
