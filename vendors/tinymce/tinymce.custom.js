@@ -21,6 +21,11 @@ function tinymce_custom_init(options) {
             this.on('init', function () {
                 this.targetElm.required = false;
                 $('#' + this.id + '_ifr').removeAttr('frameborder').removeAttr('allowtransparency');
+                var current_title = $('#' + this.id + '_ifr').attr("title");
+                var label = $("label[for="+this.id+"]")[0];
+                if (label) {
+                    $('#' + this.id + '_ifr').attr("title", label.textContent + " " + current_title);
+                }
             });
         };
         tinymce.init(opt);
