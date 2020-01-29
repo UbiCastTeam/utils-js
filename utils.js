@@ -453,7 +453,7 @@ utils.get_size_display = function (value) {
             }
         }
     }
-    return value.toFixed(2) + " " + unit + utils.translate("B");
+    return value.toFixed(1) + " " + unit + utils.translate("B");
 };
 
 // Versions comparison
