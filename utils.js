@@ -439,7 +439,7 @@ utils.get_size_display = function (value) {
     var unit = "";
     if (value > 1000) {
         value /= 1000;
-        unit = "K";
+        unit = "k";
         if (value > 1000) {
             value /= 1000;
             unit = "M";
