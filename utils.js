@@ -98,23 +98,24 @@ if (!String.prototype.repeat) {
 var utils = {};
 
 // cookies
-utils.get_cookie = function (c_name, c_default) {
+utils.get_cookie = function (name, defaultValue) {
     if (document.cookie.length > 0) {
-        var c_start = document.cookie.indexOf(c_name + "=");
-        if (c_start != -1) {
-            c_start = c_start + c_name.length+1;
-            var c_end = document.cookie.indexOf(";", c_start);
-            if (c_end == -1)
-                c_end = document.cookie.length;
-            return window.unescape(document.cookie.substring(c_start, c_end));
+        var cStart = document.cookie.indexOf(name + "=");
+        if (cStart != -1) {
+            cStart = cStart + name.length + 1;
+            var cEnd = document.cookie.indexOf(";", cStart);
+            if (cEnd == -1)
+                cEnd = document.cookie.length;
+            return window.unescape(document.cookie.substring(cStart, cEnd));
         }
     }
-    return c_default !== undefined ? c_default : "";
+    return defaultValue !== undefined ? defaultValue : "";
 };
-utils.set_cookie = function (c_name, value, expiredays) {
-    var exdate = new Date();
-    exdate.setDate(exdate.getDate() + (expiredays ? expiredays : 360));
-    document.cookie = c_name+"="+window.escape(value)+"; expires="+exdate.toUTCString()+"; path=/";
+utils.set_cookie = function (name, value, expireDays) {
+    var exDate = new Date();
+    exDate.setDate(exDate.getDate() + (expireDays ? expireDays : 360));
+    var secure = window.location.href.indexOf("https://") === 0 ? "; secure" : "";
+    document.cookie = name + "=" + window.escape(value) + "; expires=" + exDate.toUTCString() + "; path=/" + secure;
 };
 
 // strip function
