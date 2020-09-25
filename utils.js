@@ -93,6 +93,17 @@ if (!String.prototype.repeat) {
         return n;
     };
 }
+// add Event management for ie9+
+if (typeof window.Event !== 'function') {
+    var newEvent = function Event (event, params) {
+        params = params || { bubbles: false, cancelable: false, detail: null };
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+    newEvent.prototype = window.Event.prototype;
+    window.Event = newEvent;
+}
 
 
 var utils = {};
