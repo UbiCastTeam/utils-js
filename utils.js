@@ -93,6 +93,17 @@ if (!String.prototype.repeat) {
         return n;
     };
 }
+// add endsWith method to String (for IE11)
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function (search, thisLen) {
+        if (thisLen === undefined || thisLen > this.length) {
+            thisLen = this.length;
+        }
+        return this.substring(thisLen - search.length, thisLen) === search;
+    };
+}
+
+
 // add Event management for ie9+
 if (typeof window.Event !== 'function') {
     var newEvent = function Event (event, params) {
