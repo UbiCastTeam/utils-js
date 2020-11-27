@@ -93,6 +93,28 @@ if (!String.prototype.repeat) {
         return n;
     };
 }
+// add endsWith method to String (for IE11)
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function (search, thisLen) {
+        if (thisLen === undefined || thisLen > this.length) {
+            thisLen = this.length;
+        }
+        return this.substring(thisLen - search.length, thisLen) === search;
+    };
+}
+
+
+// add Event management for ie9+
+if (typeof window.Event !== 'function') {
+    var newEvent = function Event (event, params) {
+        params = params || { bubbles: false, cancelable: false, detail: null };
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+    };
+    newEvent.prototype = window.Event.prototype;
+    window.Event = newEvent;
+}
 
 
 var utils = {};
@@ -211,24 +233,37 @@ utils._get_ios_version = function () {
 
 utils._get_os_name = function () {
     var name = "";
-    if (window.navigator && window.navigator.platform) {
-        var platform = window.navigator.platform.toLowerCase();
-        if (platform.indexOf("ipad") != -1 || platform.indexOf("iphone") != -1 || platform.indexOf("ipod") != -1) {
-            name = "ios";
-            utils.os_version = utils._get_ios_version();
+    if (window.navigator && window.navigator.userAgentData) {
+        window.navigator.userAgentData.getHighEntropyValues(["platform"]).then(function (data) {
+            if (data.platform) {
+                name = data.platform.toLowerCase();
+                if (data.platform == 'Mac OS X') {
+                    name = 'macos';
+                }
+            }
+            utils.os_name = name ? name : "unknown";
+            utils["os_is_"+name] = true;
+        });
+    } else {
+        if (window.navigator && window.navigator.platform) {
+            var platform = window.navigator.platform.toLowerCase();
+            if (platform.indexOf("ipad") != -1 || platform.indexOf("iphone") != -1 || platform.indexOf("ipod") != -1) {
+                name = "ios";
+                utils.os_version = utils._get_ios_version();
+            }
         }
+        if (!name && window.navigator && window.navigator.appVersion) {
+            var app_version = window.navigator.appVersion.toLowerCase();
+            if (app_version.indexOf("win") != -1)
+                name = "windows";
+            else if (app_version.indexOf("mac") != -1)
+                name = "macos";
+            else if (app_version.indexOf("x11") != -1 || app_version.indexOf("linux") != -1)
+                name = "linux";
+        }
+        utils.os_name = name ? name : "unknown";
+        utils["os_is_"+name] = true;
     }
-    if (!name && window.navigator && window.navigator.appVersion) {
-        var app_version = window.navigator.appVersion.toLowerCase();
-        if (app_version.indexOf("win") != -1)
-            name = "windows";
-        else if (app_version.indexOf("mac") != -1)
-            name = "macos";
-        else if (app_version.indexOf("x11") != -1 || app_version.indexOf("linux") != -1)
-            name = "linux";
-    }
-    utils.os_name = name ? name : "unknown";
-    utils["os_is_"+name] = true;
 };
 utils._get_os_name();
 utils._extract_browser_version = function (ua, re) {
@@ -251,79 +286,95 @@ utils._get_browser_info = function () {
     // get browser name and version
     var name = "unknown";
     var version = 0.0;
-    var ua = utils.user_agent;
-    if (ua.indexOf("firefox") != -1) {
-        name = "firefox";
-        version = utils._extract_browser_version(ua, /firefox\/(\d+)\.(\d+)/);
-        if (!version)
-            version = utils._extract_browser_version(ua, /rv:(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("edge") != -1) {
-        name = "edge";
-        version = utils._extract_browser_version(ua, /edge\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("chromium") != -1) {
-        name = "chromium";
-        version = utils._extract_browser_version(ua, /chromium\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("chrome") != -1) {
-        name = "chrome";
-        version = utils._extract_browser_version(ua, /chrome\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("iemobile") != -1) {
-        name = "iemobile";
-        version = utils._extract_browser_version(ua, /iemobile\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("msie") != -1) {
-        name = "ie";
-        version = utils._extract_browser_version(ua, /msie (\d+)\.(\d+)/);
-        if (version < 7)
-            utils.browser_is_ie6 = true;
-        else if (version < 8)
-            utils.browser_is_ie7 = true;
-        else if (version < 9)
-            utils.browser_is_ie8 = true;
-        else
+    if (window.navigator && window.navigator.userAgentData) {
+        utils.is_mobile = window.navigator.userAgentData.mobile;
+        var browser = window.navigator.userAgentData.uaList ? window.navigator.userAgentData.uaList[0] : null;
+        if (browser) {
+            name = browser.brand.toLowerCase();
+            version = parseFloat(browser.version);
+            if (browser.brand == 'Google Chrome') {
+                name = 'chrome';
+            }
+        }
+    } else {
+        var ua = utils.user_agent;
+        if (ua.indexOf("firefox") != -1) {
+            name = "firefox";
+            version = utils._extract_browser_version(ua, /firefox\/(\d+)\.(\d+)/);
+            if (!version)
+                version = utils._extract_browser_version(ua, /rv:(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("edge") != -1) {
+            name = "edge";
+            version = utils._extract_browser_version(ua, /edge\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("chromium") != -1) {
+            name = "chromium";
+            version = utils._extract_browser_version(ua, /chromium\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("chrome") != -1) {
+            name = "chrome";
+            version = utils._extract_browser_version(ua, /chrome\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("iemobile") != -1) {
+            name = "iemobile";
+            version = utils._extract_browser_version(ua, /iemobile\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("msie") != -1) {
+            name = "ie";
+            version = utils._extract_browser_version(ua, /msie (\d+)\.(\d+)/);
+            if (version < 7)
+                utils.browser_is_ie6 = true;
+            else if (version < 8)
+                utils.browser_is_ie7 = true;
+            else if (version < 9)
+                utils.browser_is_ie8 = true;
+            else
+                utils.browser_is_ie9 = true;
+        }
+        else if (ua.indexOf("trident") != -1) {
+            name = "ie";
+            version = utils._extract_browser_version(ua, /rv.{1}(\d+)\.(\d+)/);
             utils.browser_is_ie9 = true;
+        }
+        else if (ua.indexOf("opera") != -1) {
+            name = "opera";
+            version = utils._extract_browser_version(ua, /opera\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("konqueror") != -1) {
+            name = "konqueror";
+            version = utils._extract_browser_version(ua, /konqueror\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("mobile safari") != -1) {
+            name = "mobile_safari";
+            version = utils._extract_browser_version(ua, /mobile safari\/(\d+)\.(\d+)/);
+        }
+        else if (ua.indexOf("safari") != -1) {
+            name = "safari";
+            version = utils._extract_browser_version(ua, /version\/(\d+)\.(\d+)/);
+        }
+        // detect type of device
+        utils.is_phone = ua.indexOf("iphone") != -1 || ua.indexOf("ipod") != -1 || ua.indexOf("android") != -1 || ua.indexOf("iemobile") != -1 || ua.indexOf("opera mobi") != -1 || ua.indexOf("opera mini") != -1 || ua.indexOf("windows ce") != -1 || ua.indexOf("fennec") != -1 || ua.indexOf("series60") != -1 || ua.indexOf("symbian") != -1 || ua.indexOf("blackberry") != -1 || window.orientation !== undefined;
+        utils.is_tablet = window.navigator && window.navigator.platform == "iPad";
+        utils.is_mobile = utils.is_phone || utils.is_tablet;
     }
-    else if (ua.indexOf("trident") != -1) {
-        name = "ie";
-        version = utils._extract_browser_version(ua, /rv.{1}(\d+)\.(\d+)/);
-        utils.browser_is_ie9 = true;
-    }
-    else if (ua.indexOf("opera") != -1) {
-        name = "opera";
-        version = utils._extract_browser_version(ua, /opera\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("konqueror") != -1) {
-        name = "konqueror";
-        version = utils._extract_browser_version(ua, /konqueror\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("mobile safari") != -1) {
-        name = "mobile_safari";
-        version = utils._extract_browser_version(ua, /mobile safari\/(\d+)\.(\d+)/);
-    }
-    else if (ua.indexOf("safari") != -1) {
-        name = "safari";
-        version = utils._extract_browser_version(ua, /version\/(\d+)\.(\d+)/);
-    }
+    utils.is_tactile = document.documentElement && "ontouchstart" in document.documentElement;
+
     utils.browser_name = name;
     utils["browser_is_"+name] = true;
     utils.browser_version = version;
-
-    // detect type of device
-    utils.is_phone = ua.indexOf("iphone") != -1 || ua.indexOf("ipod") != -1 || ua.indexOf("android") != -1 || ua.indexOf("iemobile") != -1 || ua.indexOf("opera mobi") != -1 || ua.indexOf("opera mini") != -1 || ua.indexOf("windows ce") != -1 || ua.indexOf("fennec") != -1 || ua.indexOf("series60") != -1 || ua.indexOf("symbian") != -1 || ua.indexOf("blackberry") != -1 || window.orientation !== undefined;
-    utils.is_tablet = window.navigator && window.navigator.platform == "iPad";
-    utils.is_mobile = utils.is_phone || utils.is_tablet;
-    utils.is_tactile = document.documentElement && "ontouchstart" in document.documentElement;
 };
 utils._get_browser_info();
 
-utils.webgl_available = function (canvas, options) {
+utils.webgl_available = function (canvas, options, browserName) {
     var webglAvailable = !! window.WebGLRenderingContext;
     if (webglAvailable) {
         try {
-            var webglContext = webglAvailable && (canvas.getContext("webgl2", options) || canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options));
+            var webglContext;
+            if (browserName === "safari")
+                webglContext = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options);
+            else
+                webglContext = canvas.getContext("webgl2", options) || canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options);
             if (!webglContext) {
                 console.log("Impossible to initialize WebGL context. Your browser does not support Webgl context");
                 return null;
