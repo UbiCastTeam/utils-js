@@ -357,8 +357,8 @@ utils._get_browser_info = function () {
         utils.is_phone = ua.indexOf("iphone") != -1 || ua.indexOf("ipod") != -1 || ua.indexOf("android") != -1 || ua.indexOf("iemobile") != -1 || ua.indexOf("opera mobi") != -1 || ua.indexOf("opera mini") != -1 || ua.indexOf("windows ce") != -1 || ua.indexOf("fennec") != -1 || ua.indexOf("series60") != -1 || ua.indexOf("symbian") != -1 || ua.indexOf("blackberry") != -1 || window.orientation !== undefined;
         utils.is_tablet = window.navigator && window.navigator.platform == "iPad";
         utils.is_mobile = utils.is_phone || utils.is_tablet;
-        utils.is_tactile = document.documentElement && "ontouchstart" in document.documentElement;
     }
+    utils.is_tactile = document.documentElement && "ontouchstart" in document.documentElement;
 
     utils.browser_name = name;
     utils["browser_is_"+name] = true;
