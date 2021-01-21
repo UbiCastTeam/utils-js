@@ -137,7 +137,7 @@ utils.set_cookie = function (name, value, expireDays) {
     var exDate = new Date();
     exDate.setDate(exDate.getDate() + (expireDays ? expireDays : 360));
     var secure = window.location.href.indexOf("https://") === 0 ? "; secure" : "";
-    document.cookie = name + "=" + window.escape(value) + "; expires=" + exDate.toUTCString() + "; path=/" + secure;
+    document.cookie = name + "=" + window.escape(value) + "; expires=" + exDate.toUTCString() + "; path=/; samesite=none" + secure;
 };
 
 // strip function
